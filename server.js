@@ -2,6 +2,7 @@ const https = require('https');
 const http = require('http')
 const fs = require('fs');
 const express = require('express');
+require('console-stamp')(console, { pattern: 'mm/dd/yyyy HH:MM:ss.l' });
 const EVENT_VERBOSE = 'Type of event received is ';
 const EVENT_TYPE_SOUND = 'Sound';
 const EVENT_TYPE_MOTION = 'Motion';
@@ -71,7 +72,8 @@ app.post('/events/notify', function (request, response, next) {
 
   setTimeout(stopCameraStream, 60000, isStreaming);
 
-  console.info('Event addressed')
+  console.info('Event addressed');
+  console.info('==================');
   //console.log(request.body)
   response.status(200).json({ received: true });
 });
@@ -84,7 +86,7 @@ function stopCameraStream(isStreaming) {
     var assistant_command = getAssistantCommand('Camera');
     commandAssistant(assistant_command);
     isStreaming = false;
-    console.log('Streaming stoppped via Timer');
+    console.info('Streaming stoppped via Timer');
   }
 
 
@@ -93,7 +95,7 @@ function stopCameraStream(isStreaming) {
 function commandAssistant(assistant_request) {
 
   //console.log(`assistant_request..: ${assistant_request}`)
-  console.log(`Assistant Command Executing..:${assistant_request}`);
+  console.info(`Assistant Command Executing..:${assistant_request}`);
   const options = {
     hostname: 'localhost',
     port: 3000,
