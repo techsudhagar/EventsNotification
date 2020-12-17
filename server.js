@@ -2,7 +2,9 @@ const https = require('https');
 const http = require('http')
 const fs = require('fs');
 const express = require('express');
-
+const EVENT_VERBOSE = 'Type of event received is ';
+const EVENT_TYPE_SOUND = 'Sound';
+const EVENT_TYPE_MOTION = 'Motion';
 
 const options = {
   key: fs.readFileSync('privatekey.pem'),
@@ -19,18 +21,20 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 
 app.post('/events/notify', function (request, response, next) {
 
+  console.info(`Event notification received..`);
+
   const message = request.body.message.data
     ? Buffer.from(request.body.message.data, 'base64').toString()
     : '';
 
 
-  console.log(` Event from Sub..: ${message}`)
+  console.info(`Event message..: ${message}`);
 
   // const deviceName = message.name;
   const messageJson = JSON.parse(message);
   const deviceName = messageJson.resourceUpdate.name;
 
-  console.log(` Device Name..: ${deviceName}`)
+  console.log(`Event received from the Device Name..: ${deviceName}`);
 
   var devicePlainName;
   var assistant_request;
@@ -43,31 +47,31 @@ app.post('/events/notify', function (request, response, next) {
     //assistant_request = getAssistantCommand(devicePlainName);
 
   } else if (deviceName.endsWith('AVPHwEszKytyX3IjME_0CwnBJKjYZJbB0C9J4e3bvA5rwgO7eYWTBw8_BWJCX_rGYkavK4Vd6TSc_eAMcCFdMLyoCA2Pxw')) {
-    
+
     devicePlainName = 'Garage Camera';
 
   }
 
+  console.log(`Actual name of device which received event..: ${devicePlainName}`);
 
-  if(devicePlainName != null ) {
-    assistant_request = getAssistantCommand(devicePlainName);
-    commandAssistant(assistant_request);
-     isStreaming = true;
+  var device_event_type = identifyEventType(messageJson.resourceUpdate.events);
 
-     //console.log(`Assistant Command:${assistant_request}`);
+  if (device_event_type != null && device_event_type == 'Motion') {
+
+    if (devicePlainName != null) {
+      assistant_request = getAssistantCommand(devicePlainName);
+      commandAssistant(assistant_request);
+      isStreaming = true;
+
+      //console.log(`Assistant Command:${assistant_request}`);
+    }
+
   }
 
-  var deviceEvent = identifyEvent(messageJson.resourceUpdate.events)
 
- /* if(assistant_request != null ) {
-  commandAssistant(assistant_request);
-  isStreaming = true;
-  } */
+  setTimeout(stopCameraStream, 60000, isStreaming);
 
-  setTimeout(stopCameraStream, 60000,isStreaming);
-
-  
-
+  console.info('Event addressed')
   //console.log(request.body)
   response.status(200).json({ received: true });
 });
@@ -75,11 +79,12 @@ app.post('/events/notify', function (request, response, next) {
 
 function stopCameraStream(isStreaming) {
 
-  //console.log(`timer func..${isStreaming}`)
+  
   if (isStreaming) {
     var assistant_command = getAssistantCommand('Camera');
     commandAssistant(assistant_command);
     isStreaming = false;
+    console.log('Streaming stoppped via Timer');
   }
 
 
@@ -88,7 +93,7 @@ function stopCameraStream(isStreaming) {
 function commandAssistant(assistant_request) {
 
   //console.log(`assistant_request..: ${assistant_request}`)
-  console.log(`Assistant Command:${assistant_request}`);
+  console.log(`Assistant Command Executing..:${assistant_request}`);
   const options = {
     hostname: 'localhost',
     port: 3000,
@@ -117,27 +122,26 @@ function commandAssistant(assistant_request) {
 
 }
 
+function identifyEventType(events) {
 
-function identifyEvent(events) {
 
+  var device_event_type = events["sdm.devices.events.CameraSound.Sound"];
 
-  var deviceEvent = events["sdm.devices.events.CameraSound.Sound"];
+  if (device_event_type == null) {
+    device_event_type = events["ssdm.devices.events.CameraMotion.Motion"];
 
-  if (deviceEvent == null) {
-    deviceEvent = events["ssdm.devices.events.CameraMotion.Motion"];
-
-    if (deviceEvent == null) {
+    if (device_event_type == null) {
 
     } else {
-
-      deviceEvent = 'Motion';
+      console.info(`${EVENT_VERBOSE} ${EVENT_TYPE_MOTION} `);
+      device_event_type = EVENT_TYPE_MOTION;
     }
 
   } else {
-
-    deviceEvent = 'Sound';
+    console.info(`${EVENT_VERBOSE} ${EVENT_TYPE_SOUND} `);
+    device_event_type = EVENT_TYPE_SOUND;
   }
-  return deviceEvent;
+  return device_event_type;
 }
 
 function getAssistantCommand(device_name) {
