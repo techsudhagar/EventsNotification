@@ -23,9 +23,14 @@ app.post('/events/notify', function (request, response, next) {
     ? Buffer.from(request.body.message.data, 'base64').toString()
     : '';
 
+
+  console.log(` Event from Sub..: ${message}`)
+
   // const deviceName = message.name;
   const messageJson = JSON.parse(message);
   const deviceName = messageJson.resourceUpdate.name;
+
+  console.log(` Device Name..: ${deviceName}`)
 
   var devicePlainName;
   var assistant_request;
@@ -35,24 +40,33 @@ app.post('/events/notify', function (request, response, next) {
 
     devicePlainName = 'Indoor Camera';
 
-    assistant_request = getAssistantCommand(devicePlainName);
+    //assistant_request = getAssistantCommand(devicePlainName);
 
   } else if (deviceName.endsWith('AVPHwEszKytyX3IjME_0CwnBJKjYZJbB0C9J4e3bvA5rwgO7eYWTBw8_BWJCX_rGYkavK4Vd6TSc_eAMcCFdMLyoCA2Pxw')) {
-
+    
     devicePlainName = 'Garage Camera';
 
   }
 
+
+  if(devicePlainName != null ) {
+    assistant_request = getAssistantCommand(devicePlainName);
+    commandAssistant(assistant_request);
+     isStreaming = true;
+
+     //console.log(`Assistant Command:${assistant_request}`);
+  }
+
   var deviceEvent = identifyEvent(messageJson.resourceUpdate.events)
 
-  if(assistant_request != null ) {
+ /* if(assistant_request != null ) {
   commandAssistant(assistant_request);
   isStreaming = true;
-  }
+  } */
 
   setTimeout(stopCameraStream, 60000,isStreaming);
 
-  console.log(`Hello, ${devicePlainName}:${deviceEvent}:${assistant_request}`);
+  
 
   //console.log(request.body)
   response.status(200).json({ received: true });
@@ -73,7 +87,8 @@ function stopCameraStream(isStreaming) {
 
 function commandAssistant(assistant_request) {
 
-  console.log(`assistant_request..: ${assistant_request}`)
+  //console.log(`assistant_request..: ${assistant_request}`)
+  console.log(`Assistant Command:${assistant_request}`);
   const options = {
     hostname: 'localhost',
     port: 3000,
@@ -105,7 +120,7 @@ function commandAssistant(assistant_request) {
 
 function identifyEvent(events) {
 
-  
+
   var deviceEvent = events["sdm.devices.events.CameraSound.Sound"];
 
   if (deviceEvent == null) {
