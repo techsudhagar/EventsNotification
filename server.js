@@ -6,6 +6,8 @@ require('console-stamp')(console, { pattern: 'mm/dd/yyyy HH:MM:ss.l' });
 const EVENT_VERBOSE = 'Type of event received is ';
 const EVENT_TYPE_SOUND = 'Sound';
 const EVENT_TYPE_MOTION = 'Motion';
+let secondsElapsed = 0;
+const STREAM_PERIOD = 61; // Seconds
 
 const options = {
   key: fs.readFileSync('privatekey.pem'),
@@ -19,6 +21,8 @@ const app = express();
 
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+setInterval(secondsElapsedAction, 1000);
+
 
 app.post('/events/notify', function (request, response, next) {
 
@@ -59,18 +63,17 @@ app.post('/events/notify', function (request, response, next) {
 
   if (device_event_type != null && device_event_type == 'Motion') {
 
-    if (devicePlainName != null) {
+    if (devicePlainName != null && devicePlainName == 'Garage Camera') {
       assistant_request = getAssistantCommand(devicePlainName);
       commandAssistant(assistant_request);
       isStreaming = true;
-
+      secondsElapsed = 0;
+      console.info(`Timer count reset to ${secondsElapsed}`);
       //console.log(`Assistant Command:${assistant_request}`);
     }
 
   }
 
-
-  setTimeout(stopCameraStream, 60000, isStreaming);
 
   console.info('Event addressed');
   console.info('==================');
@@ -78,18 +81,30 @@ app.post('/events/notify', function (request, response, next) {
   response.status(200).json({ received: true });
 });
 
+function secondsElapsedAction(){
 
-function stopCameraStream(isStreaming) {
+  secondsElapsed = secondsElapsed + 1;
+
+  if(secondsElapsed%60 == 0) {
+    console.info(`Timer count increasing to ${secondsElapsed}`);
+  }
 
   
-  if (isStreaming) {
+
+  if(secondsElapsed == STREAM_PERIOD ) {
+
+    stopCameraStream();
+  }
+}
+
+function stopCameraStream() {
+
+
     var assistant_command = getAssistantCommand('Camera');
     commandAssistant(assistant_command);
     isStreaming = false;
     console.info('Streaming stoppped via Timer');
-  }
-
-
+  
 }
 
 function commandAssistant(assistant_request) {
