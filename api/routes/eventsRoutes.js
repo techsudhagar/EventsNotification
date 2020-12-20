@@ -16,19 +16,6 @@ router.use(express.urlencoded({ extended: true })) // for parsing application/x-
 
 setInterval(secondsElapsedAction, 1000);
 
-/*
-
-router.post('/notify', function(request, response){
-
-  console.log('Notification Received');
-
-  console.log();
-
-  response.status(200).json({received: true});
-
-});
-
-*/
 
 router.post('/notify', function (request, response) {
 
@@ -101,7 +88,7 @@ function secondsElapsedAction() {
 
 
 
-  if (secondsElapsed == STREAM_PERIOD) {
+  if (secondsElapsed == STREAM_PERIOD || secondsElapsed%600 == 0 ) {
 
     stopCameraStream();
   }
@@ -110,7 +97,7 @@ function secondsElapsedAction() {
 function stopCameraStream() {
 
 
-  var assistant_command = getAssistantCommand('My Sun Camera');
+  var assistant_command = getAssistantCommand('Camera');
   commandAssistant(assistant_command);
   isStreaming = false;
   console.info('Streaming stoppped via Timer');
