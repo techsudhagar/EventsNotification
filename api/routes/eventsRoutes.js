@@ -60,7 +60,15 @@ router.post('/notify', function (request, response) {
   if (device_event_type != null && (device_event_type == EVENT_TYPE_MOTION || device_event_type == EVENT_TYPE_PERSON)) {
 
     if (devicePlainName != null && devicePlainName == 'Garage Camera') {
+
+      //const broadcast_command = getBroadcastCommand('You got motion notification for the garage door');
+      //commandAssistant(broadcast_command);
+
+    
       assistant_request = getAssistantCommand(devicePlainName);
+
+      //setTimeout(commandAssistant, 3000,assistant_request);
+
       commandAssistant(assistant_request);
       isStreaming = true;
       secondsElapsed = 0;
@@ -77,6 +85,16 @@ router.post('/notify', function (request, response) {
   response.status(200).json({ received: true });
 });
 
+function getBroadcastCommand(command) {
+
+  return `{
+    "command": "${command}",
+    "broadcast": true,
+    "user": "techsudhagar@gmail.com" 
+    }`;
+
+
+}
 
 function secondsElapsedAction() {
 
@@ -88,7 +106,7 @@ function secondsElapsedAction() {
 
 
 
-  if (secondsElapsed == STREAM_PERIOD || secondsElapsed%600 == 0 ) {
+  if (secondsElapsed == STREAM_PERIOD || secondsElapsed % 600 == 0) {
 
     stopCameraStream();
   }
@@ -98,7 +116,7 @@ function stopCameraStream() {
 
 
   var assistant_command = getAssistantCommand('Camera');
-  commandAssistant(assistant_command);
+  //commandAssistant(assistant_command);
   isStreaming = false;
   console.info('Streaming stoppped via Timer');
 

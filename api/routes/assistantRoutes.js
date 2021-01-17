@@ -29,7 +29,7 @@ function garageDoorOpenNotify(){
 
     if(last_action == 'Garage door is opened') {
 
-        commandAssistant(getAssistantCommand('opened'));
+        //commandAssistant(getAssistantCommand('opened'));
     }
 
 }
