@@ -115,8 +115,8 @@ function secondsElapsedAction() {
 function stopCameraStream() {
 
 
-  var assistant_command = getAssistantCommand('Camera');
-  //commandAssistant(assistant_command);
+  var assistant_command = getAssistantCommand('Garage Camera');
+  commandAssistant(assistant_command);
   isStreaming = false;
   console.info('Streaming stoppped via Timer');
 
