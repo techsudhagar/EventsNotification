@@ -18,7 +18,7 @@ function turnLightState(state,device) {
 
   const command = `{
 		"command": "Turn ${state} ${device}",
-		"converse": true,
+		"converse": false,
 		"user": "techsudhagar@gmail.com" 
 		}`;
 
