@@ -71,7 +71,7 @@ function elapsedAction() {
   }
 
 
-  if (tubelight_on_count >= NO_MOTION_DURATION) {
+  if (tubelight_on_count == NO_MOTION_DURATION) {
 
     turnLightState('OFF','Tube Light');
   }
