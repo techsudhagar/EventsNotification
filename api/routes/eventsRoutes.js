@@ -19,11 +19,13 @@ setInterval(secondsElapsedAction, 1000);
 
 
 
-router.post('/sensor/front/notify', function (request, response) {
+router.post('/sensor/kidslight/notify', function (request, response) {
 
   console.info('Front sensor received motion notification');
 
   assistant.turnLightState('ON','Tube Light');
+
+  response.status(200).json({ received: true });
 
 
 });
