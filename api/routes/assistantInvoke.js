@@ -1,7 +1,7 @@
 
 const http = require('http');
 let tubelight_on_count = 0;
-const NO_MOTION_DURATION = 1000 * 60 * 15; //mins
+const NO_MOTION_DURATION = 60 * 15; //mins
 
 
 require('console-stamp')(console, { pattern: 'mm/dd/yyyy HH:MM:ss.l' });
