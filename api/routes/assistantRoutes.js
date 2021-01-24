@@ -34,6 +34,21 @@ function garageDoorOpenNotify(){
 
 }
 
+function turnLightState(state) {
+	console.log(` Turning light state to ${state}.`);
+
+	const command  = `{
+		"command": "Turn ${state} tube light",
+		"converse": true,
+		"user": "techsudhagar@gmail.com" 
+		}`;
+
+
+	commandAssistant(command);
+
+}
+
+
 function getAssistantCommand(action) {
 const command_json = `
 {
@@ -82,4 +97,7 @@ function commandAssistant(assistant_request) {
 
 }
 
-module.exports = router;
+module.exports =  router;
+
+
+

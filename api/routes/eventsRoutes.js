@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http')
+const assistant = require('./assistantInvoke');
 
 const router = express.Router();
 require('console-stamp')(console, { pattern: 'mm/dd/yyyy HH:MM:ss.l' });
@@ -15,6 +16,17 @@ router.use(express.json()) // for parsing application/json
 router.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 setInterval(secondsElapsedAction, 1000);
+
+
+
+router.post('/sensor/front/notify', function (request, response) {
+
+  console.info('Front sensor received motion notification');
+
+  assistant.turnLightState('ON','Tube Light');
+
+
+});
 
 
 router.post('/notify', function (request, response) {
