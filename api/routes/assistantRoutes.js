@@ -55,19 +55,19 @@ router.post('/passthru/command', function (request, response) {
 
   if (device_name == GARAGE_CAM_NAME) {
 
-    if (garage_camera == OFF) {
+   // if (garage_camera == OFF) {
       garage_camera = ON;
       front_camera = OFF;
       state_change = true;
-    }
+   // }
 
   } else if (device_name == FRONT_CAM_NAME) {
-    if (front_camera == OFF) {
+   // if (front_camera == OFF) {
       garage_camera = OFF;
       front_camera = ON;
       front_camera_timer = 0;
       state_change = true;
-    }
+    //}
 
   } else if (device_name == TUBELIGHT_NAME) {
     if (tubelight == OFF) {
