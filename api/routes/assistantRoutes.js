@@ -9,6 +9,7 @@ const GARAGE_CAM_NAME = 'Garage Camera';
 const FRONT_CAM_NAME = 'Front Door';
 const TUBELIGHT_NAME = 'Tube Light';
 const DEVICE_TYPE_CAMERA = 'Camera';
+const DEVICE_TYPE_LIGHT = 'Light';
 const ON = 'ON';
 const OFF = 'OFF';
 const SHOW = 'Show';
@@ -108,7 +109,7 @@ function energySaver() {
   if (tubelight == ON) {
     if (tubelight_timer >= 15) {
 
-      const command = getAssistantCommand(TUBELIGHT_NAME, OFF, DEVICE_TYPE_CAMERA);
+      const command = getAssistantCommand(TUBELIGHT_NAME, OFF, DEVICE_TYPE_LIGHT);
 
       commandAssistant(command);
 
@@ -135,11 +136,11 @@ function energySaver() {
 function getAssistantCommand(device_name, action, device_type) {
 
   var command;
-  if (device_type == 'Camera') {
+  if (device_type == DEVICE_TYPE_CAMERA) {
     command = CAMERA_COMMAND.replace('device', device_name).replace('action', action);
     //console.info(command);
 
-  } else if (device_type == 'Light') {
+  } else if (device_type == DEVICE_TYPE_LIGHT) {
 
     command = LIGHT_COMMAND.replace('device', device_name).replace('action', action);
     //console.info(command);
