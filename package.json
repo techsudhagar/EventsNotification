@@ -4,7 +4,7 @@
   "description": "Rest API Server",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js >> /home/pi/logs/events-notification.log",
+    "start": "sudo node server.js >> /home/pi/logs/events-notification.log",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
