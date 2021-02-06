@@ -6,7 +6,7 @@ const NO_MOTION_DURATION = 60 * 15; //mins
 
 require('console-stamp')(console, { pattern: 'mm/dd/yyyy HH:MM:ss.l' });
 
-setInterval(elapsedAction, 1000);
+//setInterval(elapsedAction, 1000);
 
 
 function turnLightState(state,device) {

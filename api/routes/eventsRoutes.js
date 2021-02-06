@@ -15,9 +15,7 @@ const STREAM_PERIOD = 61; // Seconds
 router.use(express.json()) // for parsing application/json
 router.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
-setInterval(secondsElapsedAction, 1000);
-
-
+//setInterval(secondsElapsedAction, 1000);
 
 router.post('/sensor/kidslight/notify', function (request, response) {
 
@@ -75,23 +73,17 @@ router.post('/notify', function (request, response) {
 
     if (devicePlainName != null && devicePlainName == 'Garage Camera') {
 
-      //const broadcast_command = getBroadcastCommand('You got motion notification for the garage door');
-      //commandAssistant(broadcast_command);
-
     
-      assistant_request = getAssistantCommand(devicePlainName);
+      assistant_request = getPassthruCommand(devicePlainName);
 
-      //setTimeout(commandAssistant, 3000,assistant_request);
-
-      commandAssistant(assistant_request);
+      commandPassthruAssistant(assistant_request);
       isStreaming = true;
       secondsElapsed = 0;
       console.info(`Timer count reset to ${secondsElapsed}`);
-      //console.log(`Assistant Command:${assistant_request}`);
+     
     }
 
   }
-
 
   console.info('Event addressed');
   console.info('==================');
@@ -99,51 +91,14 @@ router.post('/notify', function (request, response) {
   response.status(200).json({ received: true });
 });
 
-function getBroadcastCommand(command) {
-
-  return `{
-    "command": "${command}",
-    "broadcast": true,
-    "user": "techsudhagar@gmail.com" 
-    }`;
-
-
-}
-
-function secondsElapsedAction() {
-
-  secondsElapsed = secondsElapsed + 1;
-
-  if (secondsElapsed % 60 == 0) {
-    console.info(`Timer count increasing to ${secondsElapsed}`);
-  }
-
-
-
-  if (secondsElapsed == STREAM_PERIOD || secondsElapsed % 600 == 0) {
-
-    stopCameraStream();
-  }
-}
-
-function stopCameraStream() {
-
-
-  var assistant_command = getAssistantCommand('Garage Camera');
-  commandAssistant(assistant_command);
-  isStreaming = false;
-  console.info('Streaming stoppped via Timer');
-
-}
-
-function commandAssistant(assistant_request) {
+function commandPassthruAssistant(assistant_request) {
 
   //console.log(`assistant_request..: ${assistant_request}`)
-  console.info(`Assistant Command Executing..:${assistant_request}`);
+  console.info(`Assistant Passthru Command Executing..:${assistant_request}`);
   const options = {
     hostname: 'localhost',
-    port: 3000,
-    path: '/assistant',
+    port: 5000,
+    path: '/assistant/passthru/command',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -166,7 +121,7 @@ function commandAssistant(assistant_request) {
   req.write(assistant_request)
   req.end()
 
-  console.info(`Assistant Command Executed`);
+  console.info(`Assistant Passthru Command Executed`);
 
 }
 
@@ -199,12 +154,12 @@ function identifyEventType(events) {
   return device_event_type;
 }
 
-function getAssistantCommand(device_name) {
+function getPassthruCommand(device_name) {
 
   var command_request = `{
-    "command": "show ${device_name} on Hub",
-    "converse": false,
-    "user": "techsudhagar@gmail.com" 
+    "device_name": "${device_name}",
+    "action": "show",
+    "device_type": "Camera" 
 }`;
 
   return command_request;
