@@ -33,4 +33,5 @@ app.use((req, res) => {
 app.listen(5000);
 
 https.createServer(options, app).listen(443);
+console.log("Event notification server started listening...");
 

@@ -13,6 +13,7 @@ const DEVICE_TYPE_LIGHT = 'Light';
 const ON = 'ON';
 const OFF = 'OFF';
 const SHOW = 'Show';
+const TURN_OFF = 'TURN OFF';
 
 router.use(express.json()) // for parsing application/json
 router.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -23,7 +24,7 @@ setInterval(timerCount, 1000 * 60 * 1);
 var last_action = 'None';
 var garage_camera = OFF;
 var front_camera = OFF;
-var tubelight = OFF;
+var tubelight_state = OFF;
 var tubelight_timer = 0;
 var front_camera_timer = 0;
 var state_change = false;
@@ -71,9 +72,9 @@ router.post('/passthru/command', function (request, response) {
     //}
 
   } else if (device_name == TUBELIGHT_NAME) {
-    if (tubelight == OFF) {
+    if (tubelight_state == OFF) {
       tubelight_timer = 0;
-      tubelight = ON;
+      tubelight_state = ON;
       state_change = true;
     }
 
@@ -109,13 +110,9 @@ function energySaver() {
   if (tubelight == ON) {
     if (tubelight_timer >= 15) {
 
-      const command = getAssistantCommand(TUBELIGHT_NAME, OFF, DEVICE_TYPE_LIGHT);
+      turnOffLight(TUBELIGHT_NAME);
 
-      commandAssistant(command);
-
-      tubelight = OFF;
-
-      console.info(`Tube Light turned ${OFF} by Energy Saver`);
+      
     }
   } else if (front_camera == ON) {
     if (front_camera_timer >= 15) {
@@ -128,11 +125,25 @@ function energySaver() {
 
   }
 
+  if(tubelight_timer > 30 && tubelight_timer < 120) {
+
+    turnOffLight(TUBELIGHT_NAME);
+  }
 
 
 }
 
+function turnOffLight(device_name){
 
+  const command = getAssistantCommand(device_name, TURN_OFF, DEVICE_TYPE_LIGHT);
+
+      commandAssistant(command);
+
+      tubelight = OFF;
+
+      console.info(`Tube Light turned ${OFF} by Energy Saver`);
+
+}
 function getAssistantCommand(device_name, action, device_type) {
 
   var command;
