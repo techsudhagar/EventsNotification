@@ -105,9 +105,9 @@ function timerCount() {
 
 function energySaver() {
 
-  console.info(`Energy saver called.. Tube Light State: ${tubelight}, Timer ${tubelight_timer} and Front Cam State: ${front_camera}, Time: ${front_camera_timer}`);
+  console.info(`Energy saver called.. Tube Light State: ${tubelight_state}, Timer ${tubelight_timer} and Front Cam State: ${front_camera}, Time: ${front_camera_timer}`);
 
-  if (tubelight == ON) {
+  if (tubelight_state == ON) {
     if (tubelight_timer >= 15) {
 
       turnOffLight(TUBELIGHT_NAME);
@@ -139,7 +139,7 @@ function turnOffLight(device_name){
 
       commandAssistant(command);
 
-      tubelight = OFF;
+      tubelight_state = OFF;
 
       console.info(`Tube Light turned ${OFF} by Energy Saver`);
 
