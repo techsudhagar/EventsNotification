@@ -162,7 +162,7 @@ function getAssistantCommand(device_name, action, device_type) {
    
     "command": "${command}",
     "converse": false,
-    "user": "techsudhagar@gmail.com" 
+    "user": "nagarajan.sudhagar@gmail.com" 
 
 }
 `
